@@ -1,0 +1,21 @@
+syntax="proto3"; // version del proto
+
+option go_package = "./;confproto"; // crear el paquete confproto
+
+import "appointment.proto"; // importar el archivo de definición de la cita
+
+
+// Definición del servicio de doctor
+service DoctorService {
+  rpc GetDoctorAppointments(GetDoctorAppointmentsRequest) returns (GetDoctorAppointmentsResponse) {}
+}
+
+
+// Definición de los mensajes de la petición y respuesta
+message GetDoctorAppointmentsRequest {
+  string doctor_id = 1;
+}
+
+message GetDoctorAppointmentsResponse {
+  repeated Appointment appointments = 1; // lista de citas
+}

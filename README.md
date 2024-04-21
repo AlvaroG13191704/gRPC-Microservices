@@ -55,3 +55,46 @@ https://grpc.io/
 Documentación oficial de Protocol Buffers:
 https://protobuf.dev/
 
+## Levantar imagen de mongoDB en un docker-compose
+```bash
+docker compose up -d
+```
+
+## Servicio de doctores
+El servicio de doctores estará hecho en Golang y usará el framework Fiber. Este servicio tendrá dos endpoints, uno para gRPC y otro para REST.
+
+Para iniciar crearemos un directorio llamado `go-service` y dentro de este crearemos un archivo `main.go` con el siguiente contenido:
+
+```bash
+mkadir go-service
+cd go-service
+```
+
+Creamos un archivo `go.mod` con el nombre del módulo y las dependencias necesarias:
+
+```bash
+go mod init <nombre-del-modulo>/go-service
+```
+
+Instalamos las dependencias globales necesarias para gRPC y Protocol Buffers, luego activamos el path de binarios de Go:
+
+```bash
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+export PATH="$PATH:$(go env GOPATH)/bin" # linux
+$env:PATH += ";$(go env GOPATH)/bin" # windows
+```
+
+Instalar estas depencias en caso de que no estén instaladas:
+
+```bash
+go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
+go get google.golang.org/grpc
+go get github.com/gofiber/fiber/v2
+```
+
+Creamos un archivo directorio llamado `proto` y dentro de este un archivo `doctor.proto` con el siguiente contenido:
+
+```proto
