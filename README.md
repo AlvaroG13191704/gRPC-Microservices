@@ -97,4 +97,8 @@ go get github.com/gofiber/fiber/v2
 
 Creamos un archivo directorio llamado `proto` y dentro de este un archivo `doctor.proto` con el siguiente contenido:
 
-```proto
+## Python
+```bash
+python -m pip install grpcio
+python -m pip install grpcio-tools
+python -m grpc_tools.protoc -I./proto --python_out=./ --pyi_out=./ --grpc_python_out=./ ./proto/appointment.proto   

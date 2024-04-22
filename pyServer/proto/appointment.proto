@@ -1,0 +1,24 @@
+syntax="proto3"; // version del proto
+
+
+// Definicion del servicio
+service AppointmentsService {
+  rpc GetAppointments(GetAppointmentsRequest) returns (GetAppointmentsResponse) {}
+}
+
+// Appointment message definition
+message Appointment {
+  int64 id = 1;
+  string doctor_id = 2;
+  string patient_name = 3;
+  string description = 4;
+}
+
+// Definir el request y el response
+message GetAppointmentsRequest {
+  string doctor_id = 1;
+}
+
+message GetAppointmentsResponse {
+  repeated Appointment appointments = 1; // repeated indica que es un array
+}
