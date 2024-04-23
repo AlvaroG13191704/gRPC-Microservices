@@ -34,11 +34,11 @@ Ente repositorio haremos un ejemplo simulando la vida real y unos benchmarks par
 
 ## Escenario de la vida real
 
-El ejemplo que tendremos es apegado a un escenario de la vida real, en este caso tendremos una red de microservicios para una aplicación que administra clínicas médicas. La idea es tener separado el microservicio de los doctores y el de las citas médicas. 
+El ejemplo que tendremos es apegado a un escenario de la vida real, en este caso tendremos una red de microservicios para una aplicación que administra clínicas médicas. La idea es tener un servicio de doctores y otro servicio de citas. 
 
-En algún punto del desarrollo de la aplicación, necesitaremos que el microservicio de los doctores se comunique con el microservicio de las citas médicas para obtener información sobre las citas de un doctor en específico. Esto con el objetivo de que no tengamos código duplicado y que los microservicios sean independientes entre sí. 
+En algún punto del desarrollo de la aplicación, necesitaremos que el microservicio de los doctores (cliente) se comunique con el microservicio de las citas médicas (server) para obtener información sobre las citas de un doctor en específico. Esto con el objetivo de que no tengamos código duplicado y que los microservicios sean independientes entre sí. 
 
-Para esto, usaremos gRPC para la comunicación entre los microservicios, crearemos un microservicio en Python usando FastAPI y otro en Go usando Fiber. Ambos endpoints implementarán gRPC y REST.
+Para esto, usaremos gRPC para la comunicación entre los servicios, crearemos el servicio de doctores (cliente) el cual se podrá comunicar con el servicio de citas médicas (server) para obtener la información necesaria usando gRPC.
 
 
 ## Instalaciones globales necesarias
@@ -55,50 +55,71 @@ https://grpc.io/
 Documentación oficial de Protocol Buffers:
 https://protobuf.dev/
 
-## Levantar imagen de mongoDB en un docker-compose
+## Levantar imagen de mongoDB 
+Para que este ejemplo sea más apegado a un entorno de producción, usaremos una base de datos no relacional como MongoDB. Para esto, usaremos Docker para levantar una instancia de MongoDB y poder conectarnos a ella desde nuestros servicios.
 ```bash
 docker compose up -d
 ```
 
-## Servicio de doctores
-El servicio de doctores estará hecho en Golang y usará el framework Fiber. Este servicio tendrá dos endpoints, uno para gRPC y otro para REST.
+## Servicio de doctores (Cliente)
+El servicio de doctores estará hecho en Golang y usará el framework Fiber. Este servicio tendrá dos endpoints, uno para gRPC y otro para REST. Además cuenta con un directorio proto el cual contiene el archivo appointment.proto que define la estructura de los mensajes que se intercambiarán entre el cliente y el servidor.
 
-Para iniciar crearemos un directorio llamado `go-service` y dentro de este crearemos un archivo `main.go` con el siguiente contenido:
-
-```bash
-mkadir go-service
-cd go-service
-```
-
-Creamos un archivo `go.mod` con el nombre del módulo y las dependencias necesarias:
+Estas son las depenencias necesarioas a instalar para el servicio de doctores:
 
 ```bash
-go mod init <nombre-del-modulo>/go-service
-```
-
-Instalamos las dependencias globales necesarias para gRPC y Protocol Buffers, luego activamos el path de binarios de Go:
-
-```bash
+# grpc
 go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-
+go get google.golang.org/grpc
+go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
+# Fiber v2
+go get github.com/gofiber/fiber/v2
+# Activar el path de go
 export PATH="$PATH:$(go env GOPATH)/bin" # linux
 $env:PATH += ";$(go env GOPATH)/bin" # windows
 ```
 
-Instalar estas depencias en caso de que no estén instaladas:
 
+Para poder generar el código compilado del archivo `.protto` se debe ejecutar el siguiente comando dentro de la carpeta `proto`. Los archivos generados son `appointment.pb.go` y `appointment_grpc.pb.go`. El primero contiene la estructura de los mensajes y el segundo contiene la definición de los servicios.
 ```bash
-go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
-go get google.golang.org/grpc
-go get github.com/gofiber/fiber/v2
+cd proto
+protoc --go_out=. --go-grpc_out=. appointment.proto
 ```
 
-Creamos un archivo directorio llamado `proto` y dentro de este un archivo `doctor.proto` con el siguiente contenido:
+## Servicio de citas médicas con python (Server)
 
-## Python
+El servicio de citas médicas es mucho más simple ya que solo tendrá la funcionalidad de escuchar las peticiones del cliente y devolver la información necesaria. Este servicio estará hecho en Python en un entorno virtual.
+
+Para crear el entorno virtual y activarlo, se deben ejecutar los siguientes comandos:
+
 ```bash
-python -m pip install grpcio
-python -m pip install grpcio-tools
+python -m venv env
+source env/bin/activate # linux
+env/Scripts/activate # windows
+```
+
+Luego se deben instalar las dependencias necesarias para el servicio de citas médicas:
+
+```bash
+pip install grpcio
+pip install grpcio-tools
+pip install pymongo
+```
+
+Al igual que el cliente de doctores, se debe generar el código compilado del archivo `.proto` para poder usarlo en el servidor. Para esto, se debe ejecutar el siguiente comando en la raíz del proyecto de python. Los archivos generados son `appointment_pb2.py` y `appointment_pb2_grpc.py`. El primero contiene la estructura de los mensajes y el segundo contiene la definición de los servicios.
+
+```bash
 python -m grpc_tools.protoc -I./proto --python_out=./ --pyi_out=./ --grpc_python_out=./ ./proto/appointment.proto   
+```
+
+## Servicio de citas médicas con Golang (Server)
+
+El servicio de citas médicas en Golang es similar al servicio de doctores, solo que este solo tendrá la funcionalidad de escuchar las peticiones del cliente y devolver la información necesaria. Este servicio estará hecho en Golang.
+
+Para instalar las dependencias necesarias para el servicio de citas médicas en Golang, se deben ejecutar los siguientes comandos:
+
+```bash
+go get google.golang.org/grpc
+go get go.mongodb.org/mongo-driver/mongo
+```
+
