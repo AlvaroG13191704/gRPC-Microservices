@@ -1,7 +1,7 @@
 package db
 
 import (
-	"conferencia/goClientHttp/models"
+	confproto "conferencia/goClientgRPC/proto"
 	"context"
 	"fmt"
 	"log"
@@ -57,10 +57,11 @@ func (pc *AppointmentCollection) Connect() {
 }
 
 // Function to get the data from the database
-func (ap *AppointmentCollection) GetAppointments(doctorID string) ([]models.Appointment, error) {
+func (ap *AppointmentCollection) GetAppointments(doctorID string) ([]*confproto.Appointment, error) {
 	ap.Connect()
 
-	var appointments []models.Appointment
+	// var appointments []models.Appointment
+	var appointments []*confproto.Appointment
 
 	filter := bson.D{{Key: "doctor_id", Value: doctorID}}
 
@@ -72,7 +73,7 @@ func (ap *AppointmentCollection) GetAppointments(doctorID string) ([]models.Appo
 	defer cursor.Close(context.Background())
 
 	for cursor.Next(context.Background()) {
-		var appointment models.Appointment
+		var appointment *confproto.Appointment
 		cursor.Decode(&appointment)
 		appointments = append(appointments, appointment)
 	}

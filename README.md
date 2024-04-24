@@ -123,3 +123,12 @@ go get google.golang.org/grpc
 go get go.mongodb.org/mongo-driver/mongo
 ```
 
+### Levantar los servicios
+
+Para levantar tanto el cliente, como el servidor hecho con gRPC y REST, se deben ejecutar los siguientes comandos en la raíz de cada proyecto:
+
+**Es importante que el contenedor de mongo este corriendo.**
+
+```bash
+go run main.go
+```

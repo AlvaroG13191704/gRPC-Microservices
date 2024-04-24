@@ -1,6 +1,7 @@
 package main
 
 import (
+	"conferencia/goClientgRPC/db"
 	confproto "conferencia/goClientgRPC/proto"
 	"context"
 	"fmt"
@@ -20,15 +21,15 @@ func (s *AppointmentServer) GetAppointments(ctx context.Context, in *confproto.G
 
 	fmt.Println("Doctor ID: ", in.DoctorId)
 
+	// create mongo instance
+	db := db.AppointmentCollection{}
+	result, err := db.GetAppointments(in.DoctorId)
+	if err != nil {
+		return nil, err
+	}
+
 	return &confproto.GetAppointmentsResponse{
-		Appointments: []*confproto.Appointment{
-			{
-				Id:          "1",
-				DoctorId:    in.DoctorId,
-				PatientName: "John Doe",
-				Description: "Checkup",
-			},
-		},
+		Appointments: result,
 	}, nil
 }
 

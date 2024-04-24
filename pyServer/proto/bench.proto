@@ -1,0 +1,11 @@
+syntax="proto3"; // version del proto
+
+
+// Definición del servicio
+
+
+
+// Message
+message Benchmark {
+  
+}
