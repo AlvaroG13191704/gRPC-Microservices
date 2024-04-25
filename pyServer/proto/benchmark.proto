@@ -1,0 +1,26 @@
+syntax="proto3"; 
+
+// Definir el servicio
+service Benchmark {
+  // Tipo stream para que el cliente pueda enviar multiples mensajes
+  rpc Benchmark (benchmarkRequest) returns (benchmarkResponse) {}
+}
+
+
+// Message
+message Http {
+  repeated float Time = 1;
+  repeated float Weight = 2;
+}
+message Grpc {
+  repeated float Time = 1;
+  repeated float Weight = 2;
+}
+message benchmarkRequest {
+  Http http = 1;
+  Grpc grpc = 2;
+}
+
+message benchmarkResponse {
+  string message = 1;
+}

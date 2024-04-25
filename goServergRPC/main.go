@@ -1,8 +1,8 @@
 package main
 
 import (
+	confproto "conferencia/goClientgRPC/appointmentProto"
 	"conferencia/goClientgRPC/db"
-	confproto "conferencia/goClientgRPC/proto"
 	"context"
 	"fmt"
 	"net"

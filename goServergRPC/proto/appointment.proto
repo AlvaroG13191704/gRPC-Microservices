@@ -1,5 +1,5 @@
 syntax="proto3"; // version del proto
-option go_package = "./;confproto"; // crear el paquete confproto
+option go_package = "./;appointmentProto"; // crear el paquete confproto
 
 
 // Definicion del servicio

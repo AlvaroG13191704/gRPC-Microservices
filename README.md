@@ -83,7 +83,9 @@ $env:PATH += ";$(go env GOPATH)/bin" # windows
 Para poder generar el código compilado del archivo `.protto` se debe ejecutar el siguiente comando dentro de la carpeta `proto`. Los archivos generados son `appointment.pb.go` y `appointment_grpc.pb.go`. El primero contiene la estructura de los mensajes y el segundo contiene la definición de los servicios.
 ```bash
 cd proto
-protoc --go_out=. --go-grpc_out=. appointment.proto
+protoc --go_out=../appointmentProto --go-grpc_out=../appointmentProto appointment.proto
+protoc --go_out=../benchmarkProto --go-grpc_out=../benchmarkProto benchmark.proto
+
 ```
 
 ## Servicio de citas médicas con python (Server)
@@ -110,6 +112,7 @@ Al igual que el cliente de doctores, se debe generar el código compilado del ar
 
 ```bash
 python -m grpc_tools.protoc -I./proto --python_out=./ --pyi_out=./ --grpc_python_out=./ ./proto/appointment.proto   
+python -m grpc_tools.protoc -I./proto --python_out=./ --pyi_out=./ --grpc_python_out=./ ./proto/benchmark.proto   
 ```
 
 ## Servicio de citas médicas con Golang (Server)

@@ -1,7 +1,7 @@
 package db
 
 import (
-	confproto "conferencia/goClientgRPC/proto"
+	confproto "conferencia/goClientgRPC/appointmentProto"
 	"context"
 	"fmt"
 	"log"

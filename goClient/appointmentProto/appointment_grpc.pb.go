@@ -4,7 +4,7 @@
 // - protoc             v5.26.1
 // source: appointment.proto
 
-package confproto
+package appointmentProto
 
 import (
 	context "context"
